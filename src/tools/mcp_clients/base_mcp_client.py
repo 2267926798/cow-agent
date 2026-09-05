@@ -20,7 +20,7 @@ class BaseMCPClient:
         self.client_name = client_name
         self.connected = False
 
-    def connect() -> bool:
+    def connect(self) -> bool:
         """建立 MCP SSE/stdio 连接握手。"""
         # 实际通过 mcp.ClientSession 进行 SSE 建立与 list_tools 协商
         logger.info("[MCP Client: {}] Connected to server: {}", self.client_name, self.server_url)
