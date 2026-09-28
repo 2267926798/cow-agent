@@ -12,6 +12,7 @@ from src.schemas.request import DiagnoseRequest, ConfirmWorkOrderRequest
 from src.schemas.response import DiagnosisReportSchema
 from src.graph.workflow import agent_app
 from src.utils.logger import logger
+from config.settings import settings
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -62,11 +63,16 @@ def trigger_agent_diagnose(req: DiagnoseRequest) -> DiagnosisReportSchema:
         "executed_tools": [],
         "awaiting_human": False,
         "human_action": None,
-        "human_modified_suggest": None
+        "human_modified_suggest": None,
+        "supervisor_route": "",
+        "agent_scratchpad": {},
+        "critic_verdict": None,
+        "missing_slots": [],
+        "handoff_count": 0,
     }
 
     # 执行 LangGraph 状态机
-    final_state = agent_app.invoke(initial_state)
+    final_state = agent_app.invoke(initial_state, {"recursion_limit": settings.RECURSION_LIMIT})
 
     # 暂存 State 到内存 Store
     SESSION_STORE[session_id] = final_state
@@ -95,7 +101,7 @@ def confirm_work_order(req: ConfirmWorkOrderRequest) -> DiagnosisReportSchema:
     state["human_modified_suggest"] = req.modified_suggest
 
     # 唤醒恢复状态机向下流转
-    final_state = agent_app.invoke(state)
+    final_state = agent_app.invoke(state, {"recursion_limit": settings.RECURSION_LIMIT})
     SESSION_STORE[session_id] = final_state
 
     report = final_state.get("diagnosis_report")

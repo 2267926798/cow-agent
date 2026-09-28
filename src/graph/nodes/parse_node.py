@@ -44,6 +44,11 @@ def parse_intent_node(state: AgentState) -> AgentState:
     state["executed_tools"] = []
     state["collected_evidences"] = []
     state["rag_references"] = []
+    state["supervisor_route"] = ""
+    state["agent_scratchpad"] = {}
+    state["critic_verdict"] = None
+    state["missing_slots"] = []
+    state["handoff_count"] = 0
 
     log_agent_step(session_id, cow_id, "ParseNode", f"Extracted Cow ID: {cow_id}, Tags: {tags}")
     return state

@@ -15,6 +15,22 @@ def fetch_iot_metrics_mock(cow_id: str, time_window: str) -> Dict[str, Any]:
 
     入参 2 个，符合规范约束。
     """
+    # 模拟传感器离线，无法形成 IoT 证据
+    if cow_id == "9999":
+        return {
+            "cow_id": cow_id,
+            "window": time_window,
+            "max_temperature": None,
+            "avg_temperature": None,
+            "normal_temp_range": "38.5-39.2℃",
+            "rumination_minutes": None,
+            "rumination_drop_rate": None,
+            "activity_steps": None,
+            "sensor_status": "OFFLINE",
+            "device_id": f"TS-{cow_id}",
+            "timestamp": "2026-09-05 10:00:00",
+        }
+
     # 模拟 8892 号牛存在明显体温偏高与反刍下降异常
     if cow_id == "8892":
         return {
@@ -55,4 +71,10 @@ def query_cow_iot_metrics(cow_id: str, time_window: str = "24h") -> str:
     latency_ms = (time.time() - start_time) * 1000
     log_tool_execution("sess_mock", "query_cow_iot_metrics", "SUCCESS", latency_ms)
 
-    return f"【IoT 时序数据】牛只:{cow_id} | 最高体温:{data['max_temperature']}℃(正常{data['normal_temp_range']}) | 24h反刍:{data['rumination_minutes']}min(同比下降{int(data['rumination_drop_rate']*100)}%) | 设备:{data['device_id']}({data['sensor_status']})"
+    drop = data["rumination_drop_rate"]
+    drop_pct = int(drop * 100) if drop is not None else 0
+    return (
+        f"【IoT 时序数据】牛只:{cow_id} | 最高体温:{data['max_temperature']}℃"
+        f"(正常{data['normal_temp_range']}) | 24h反刍:{data['rumination_minutes']}min"
+        f"(同比下降{drop_pct}%) | 设备:{data['device_id']}({data['sensor_status']})"
+    )

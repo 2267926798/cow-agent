@@ -38,7 +38,8 @@ class Settings(BaseModel):
 
     # 状态机与安全限额
     MAX_LOOP_COUNT: int = 3
-    RECURSION_LIMIT: int = 8
+    RECURSION_LIMIT: int = 16
+    MAX_HANDOFF_COUNT: int = 6
 
 
 # 实例化全局单例配置

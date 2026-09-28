@@ -5,7 +5,8 @@ import pytest
 from src.tools.iot_tools import fetch_iot_metrics_mock, query_cow_iot_metrics
 from src.tools.cow_profile_tools import fetch_cow_profile_mock, query_cow_profile_and_history
 from src.tools.rag_tools import search_vector_kb_mock
-from src.tools.registry import get_all_registered_tools
+from src.tools.registry import get_all_registered_tools, get_tools_for_role
+from src.agents.roles import COLLECTOR, KNOWLEDGE, DIAGNOSIS
 
 
 def test_fetch_iot_metrics_mock():
@@ -35,3 +36,13 @@ def test_get_all_registered_tools():
     """测试工具注册中心加载。"""
     tools = get_all_registered_tools()
     assert len(tools) == 3
+
+
+def test_get_tools_for_role_isolation():
+    """采集与知识角色工具隔离，诊断角色无工具。"""
+    collector = get_tools_for_role(COLLECTOR)
+    knowledge = get_tools_for_role(KNOWLEDGE)
+    diagnosis = get_tools_for_role(DIAGNOSIS)
+    assert len(collector) == 2
+    assert len(knowledge) == 1
+    assert diagnosis == []
