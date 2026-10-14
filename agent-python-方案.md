@@ -1,4 +1,4 @@
-# 智慧牧场 AI Agent 诊断服务 Python 落地方案
+﻿# 智慧牧场 AI Agent 诊断服务 Python 落地方案
 
 ## 1. 核心设计目标
 
@@ -40,7 +40,6 @@ cow-agent/
 │   │   └── nodes/                  # 图节点实现
 │   │       ├── __init__.py
 │   │       ├── parse_node.py       # 告警与意图解析
-│   │       ├── tool_call_node.py   # Tool/MCP 数据采集
 │   │       ├── evidence_node.py    # 证据汇总与提炼
 │   │       ├── rag_node.py         # 兽医 SOP 知识检索
 │   │       ├── diagnose_node.py    # 诊断合成 (绑定数据支撑)
